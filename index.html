@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Life Tour｜THSR | 五福旅遊高鐵服務</title>
+    
+    <!-- Google Fonts: Inter & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vue.js 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', '"Inter"', 'sans-serif'],
+                        mono: ['"Consolas"', 'monospace'],
+                    },
+                    colors: {
+                        'navy': {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            500: '#486581',
+                            700: '#334e68',
+                            800: '#243b53',
+                            900: '#102a43', // Deep Navy
+                        },
+                        'gold': {
+                            100: '#f0e6d2',
+                            500: '#c5a365', // Muted Gold
+                            600: '#b08d55',
+                            700: '#907241',
+                        },
+                        'paper': '#f5f7fa',
+                    },
+                    boxShadow: {
+                        'prestige': '0 2px 4px rgba(16, 42, 67, 0.05), 0 8px 16px rgba(16, 42, 67, 0.05)',
+                        'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f0f4f8;
+            color: #102a43;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prestige Card Style */
+        .prestige-card {
+            background: white;
+            border-radius: 8px;
+            border-top: 3px solid #102a43; /* Navy Top Border */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .prestige-header {
+            background: #102a43;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Inputs */
+        select, input {
+            appearance: none;
+            background-color: #fff;
+            border: 1px solid #d9e2ec;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #c5a365;
+            box-shadow: 0 0 0 3px rgba(197, 163, 101, 0.2);
+        }
+        
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23334e68' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+        }
+
+        /* Marquee */
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        /* Custom Button */
+        .btn-gold {
+            background-color: #c5a365;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        .btn-gold:hover {
+            background-color: #b08d55;
+        }
+        
+        /* Section Title Line */
+        .title-line {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            color: #102a43;
+            margin-bottom: 1rem;
+        }
+        .title-line::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #d9e2ec;
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <div id="app" class="min-h-screen flex flex-col items-center pt-16 pb-12 px-4 sm:px-6">
+        
+        <!-- Marquee -->
+        <div class="fixed top-0 left-0 w-full bg-navy-900 text-gold-500 z-50 h-10 flex items-center shadow-lg overflow-hidden border-b border-gold-600">
+            <div class="marquee-content flex items-center font-bold text-lg tracking-wide px-4">
+                <i data-lucide="bell" class="w-5 h-5 mr-2 fill-current"></i>
+                作業忙碌中，訂票及掛帳請耐心等待，嚴禁催促。
+                <span class="mx-8 text-navy-600">|</span>
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                請業務們務必再次核對 票種/張數/金額 是否正確，如有錯誤 請於「出票前」告知，出票後告知請自行負責，高鐵訂票服務窗口感謝您的配合。
+            </div>
+        </div>
+        
+        <!-- Header -->
+        <header class="w-full max-w-5xl mb-8 mt-6 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center gap-4 mb-4 md:mb-0">
+                <div class="bg-navy-900 p-3 rounded text-white shadow-lg">
+                    <i data-lucide="train-front" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-navy-900 tracking-tight">Life Tour｜THSR</h1>
+                    <div class="h-1 w-20 bg-gold-500 mt-1"></div>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="block text-xs font-bold text-navy-500 uppercase tracking-widest">Internal System</span>
+                <p class="text-sm font-bold text-navy-800">五福旅遊台灣高鐵訂票服務</p>
+            </div>
+        </header>
+
+        <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Column: Main Rules -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Service Time & Rules -->
+                <section class="prestige-card p-6">
+                    <div class="title-line text-lg">
+                        <i data-lucide="clock" class="w-5 h-5 mr-2 text-gold-600"></i> 票務服務時間
+                    </div>
+                    <div class="bg-navy-50 p-4 rounded-md border-l-4 border-navy-800 mb-6">
+                        <p class="text-2xl font-bold text-navy-900 font-mono">08:40 - 18:00</p>
+                        <p class="text-xs font-bold text-navy-500 mt-1">週一至週五 (不含例假日及國定假日)</p>
+                    </div>
+
+                    <div class="title-line text-lg">
+                        <i data-lucide="file-text" class="w-5 h-5 mr-2 text-gold-600"></i> 作業規則與說明
+                    </div>
+
+                    <!-- Alerts -->
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center p-3 bg-red-50 text-red-800 rounded border border-red-100">
+                            <span class="bg-red-600 text-white text-xs px-2 py-0.5 rounded font-bold mr-3">注意</span>
+                            <span class="text-sm font-bold">恕不接急單</span>
+                        </div>
+                        <div class="flex items-center p-3 bg-blue-50 text-blue-800 rounded border border-blue-100">
+                            <span class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded font-bold mr-3">規則</span>
+                            <span class="text-sm font-bold">優待票須至少搭配一張全票。</span>
+                        </div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="space-y-4 relative pl-4 border-l border-navy-200 ml-2 mb-6">
+                        <div v-for="(item, index) in processingRules" :key="index" class="relative">
+                            <div class="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-white border-2 border-navy-500"></div>
+                            <h4 class="text-sm font-bold text-navy-900">{{ item.label }}</h4>
+                            <p class="text-sm text-navy-500">{{ item.time }}</p>
+                        </div>
+                        
+                        <!-- Peak Period -->
+                        <div class="relative pt-2">
+                            <div class="absolute -left-[21px] top-3.5 w-3 h-3 rounded-full bg-gold-500 border-2 border-gold-500"></div>
+                            <h4 class="text-sm font-bold text-navy-900 mb-1">
+                                疏運期間 <span class="text-xs font-normal text-navy-500">(國定假日、連續假期)</span>
+                            </h4>
+                            <div class="bg-gold-100/30 p-3 rounded border border-gold-100 text-sm text-navy-700">
+                                <p class="text-xs font-bold text-gold-700 mb-1">※ 疏運開賣日期依台灣高鐵公告為準</p>
+                                <ul class="list-disc list-inside space-y-1 mb-2 font-medium">
+                                    <li>請於開賣前 <strong>3 個工作天</strong> 提出申請</li>
+                                    <li>提供需求班次順位 (至少 3 個)</li>
+                                </ul>
+                                <p class="text-xs text-navy-500 border-t border-gold-100 pt-2">
+                                    將於上班時間訂票，依作業送出為準，無法保證一定有票。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-center text-xs font-bold text-navy-400 bg-navy-50 py-2 rounded">
+                        （以上作業時間皆以工作日計算，不含假日）
+                    </p>
+
+                    <!-- Process Steps -->
+                    <div class="mt-8">
+                        <div class="title-line text-base">
+                            <i data-lucide="route" class="w-4 h-4 mr-2 text-navy-400"></i> 訂票作業流程
+                        </div>
+                        <div class="flex justify-between relative px-4">
+                            <div class="absolute top-4 left-0 w-full h-0.5 bg-navy-100 -z-10"></div>
+                            <div v-for="(step, idx) in steps" :key="idx" class="flex flex-col items-center bg-white px-2">
+                                <div class="w-8 h-8 rounded-full bg-navy-900 text-white flex items-center justify-center text-xs font-bold shadow-md mb-2">
+                                    {{ idx + 1 }}
+                                </div>
+                                <span class="text-xs font-bold text-navy-700">{{ step.title }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <p class="text-sm font-bold text-navy-600 bg-navy-50 py-2 rounded border border-navy-100 mb-2">
+                                <i data-lucide="message-circle" class="w-4 h-4 inline-block mr-1 mb-0.5"></i> 請留 Slack 訊息或科威訊息
+                            </p>
+                            <p class="text-xs font-bold text-red-600">
+                                開票請於D/L前告知"可開票"，逾期系統將自動取消。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Seat Rules -->
+                    <div class="mt-8 pt-6 border-t border-navy-100">
+                        <h4 class="text-xs font-bold text-navy-400 uppercase mb-3">劃位與訂位規則</h4>
+                        <ul class="space-y-2">
+                            <li v-for="(rule, idx) in seatRules" :key="idx" class="flex items-start text-sm text-navy-600 font-medium">
+                                <i data-lucide="check-square" class="w-4 h-4 mr-2 text-gold-600 flex-shrink-0 mt-0.5"></i>
+                                {{ rule }}
+                            </li>
+                        </ul>
+                        <div class="mt-4 bg-red-50 text-red-600 text-xs font-bold p-3 rounded border border-red-100 leading-relaxed">
+                            請業務們務必再次核對 票種/張數/金額 是否正確，如有錯誤 請於「出票前」告知，出票後告知請自行負責，高鐵訂票服務窗口感謝您的配合。
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Refund Policy -->
+                <section class="prestige-card overflow-hidden">
+                    <div class="prestige-header bg-red-900">
+                        <i data-lucide="undo-2" class="w-5 h-5 mr-3 text-white"></i>
+                        <h2 class="text-lg font-bold text-white">退票/改票規則與說明</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col sm:flex-row gap-6 mb-6">
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-navy-400 uppercase block mb-1">申請期限 Deadline</span>
+                                <p class="text-lg font-bold text-navy-900">搭乘日前 4 個工作日</p>
+                                <p class="text-xs text-navy-500">天災導致高鐵停駛者不在此限</p>
+                            </div>
+                            <div class="w-px bg-navy-100 hidden sm:block"></div>
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-navy-400 uppercase block mb-1">手續費 Fee</span>
+                                <p class="text-lg font-bold text-red-700">每張 NT$ 50</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-50 border border-red-100 p-4 rounded mb-4">
+                            <h4 class="text-sm font-bold text-red-900 mb-2 flex items-center">
+                                <i data-lucide="file-warning" class="w-4 h-4 mr-2"></i> 必備文件
+                            </h4>
+                            <p class="text-sm text-red-800 font-medium">
+                                請務必提供 <span class="bg-white px-1 border border-red-200 rounded">原紙本票根</span> 或 <span class="bg-white px-1 border border-red-200 rounded">APP 電子票截圖</span>
+                            </p>
+                            <p class="text-xs text-red-500 mt-2 font-bold">※ 未提供者將視同正常搭乘，費用請自負。</p>
+                        </div>
+
+                        <div class="text-xs text-navy-500 space-y-1 font-medium bg-navy-50 p-3 rounded">
+                            <p>• 車票須於搭乘當日使用，逾期視同廢票。</p>
+                            <p>• 若逾時未搭乘，請自行洽詢站務人員是否可改搭當日其他車次之自由座，恕無法辦理退票。</p>
+                            <p>• 自 114 年 11 月 10 日起旅行社代訂之票券「無法提早搭乘」僅能延後(自由座)。</p>
+                            <p>• 非高鐵因素：因航班延誤或取消等因素致無法搭乘者，無法改期或退票。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Useful Links -->
+                <section class="prestige-card p-6">
+                    <div class="title-line text-base">
+                        <i data-lucide="link" class="w-4 h-4 mr-2 text-gold-600"></i> 常用連結
+                    </div>
+                    <div class="space-y-3">
+                        <a href="https://www.thsrc.com.tw/" target="_blank" class="flex items-center p-3 bg-navy-50 rounded border border-navy-100 hover:bg-white hover:border-gold-500 hover:shadow-md transition-all group">
+                            <div class="bg-white p-2 rounded-full text-navy-600 border border-navy-100 mr-3 group-hover:text-gold-600 group-hover:border-gold-200">
+                                <i data-lucide="globe" class="w-5 h-5"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-navy-800 text-sm group-hover:text-gold-700">台灣高鐵官方網站</h4>
+                                <p class="text-xs text-navy-400">Official Website</p>
+                            </div>
+                            <i data-lucide="external-link" class="w-4 h-4 text-navy-300 group-hover:text-gold-500"></i>
+                        </a>
+
+                        <a href="https://www.thsrc.com.tw/ArticleContent/a3b630bb-1066-4352-a1ef-58c7b4e8ef7c" target="_blank" class="flex items-center p-3 bg-navy-50 rounded border border-navy-100 hover:bg-white hover:border-gold-500 hover:shadow-md transition-all group">
+                            <div class="bg-white p-2 rounded-full text-navy-600 border border-navy-100 mr-3 group-hover:text-gold-600 group-hover:border-gold-200">
+                                <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-navy-800 text-sm group-hover:text-gold-700">台灣高鐵時刻表查詢</h4>
+                                <p class="text-xs text-navy-400">Timetable</p>
+                            </div>
+                            <i data-lucide="external-link" class="w-4 h-4 text-navy-300 group-hover:text-gold-500"></i>
+                        </a>
+
+                        <a href="https://www.thsrc.com.tw/ArticleContent/58764cad-504a-486c-b1dc-f42aaa4f3552" target="_blank" class="flex items-center p-3 bg-navy-50 rounded border border-navy-100 hover:bg-white hover:border-gold-500 hover:shadow-md transition-all group">
+                            <div class="bg-white p-2 rounded-full text-navy-600 border border-navy-100 mr-3 group-hover:text-gold-600 group-hover:border-gold-200">
+                                <i data-lucide="smartphone" class="w-5 h-5"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-navy-800 text-sm group-hover:text-gold-700">T-EX行動購票App 操作流程</h4>
+                                <p class="text-xs text-navy-400">App Guide</p>
+                            </div>
+                            <i data-lucide="external-link" class="w-4 h-4 text-navy-300 group-hover:text-gold-500"></i>
+                        </a>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Right Column: Calculator & Side Info -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- Calculator (The Highlight) -->
+                <section class="prestige-card p-0 overflow-hidden relative">
+                    <div class="bg-gradient-to-r from-navy-800 to-navy-900 p-6 text-white">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h2 class="text-xl font-bold mb-1">票價試算工具｜原價</h2>
+                                <p class="text-xs text-navy-200">Pricing & Discount Calculator</p>
+                            </div>
+                            <div class="bg-white/10 p-2 rounded">
+                                <i data-lucide="calculator" class="w-6 h-6 text-gold-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <!-- Critical Alert -->
+                        <div class="mb-2 bg-gold-100 text-gold-700 p-3 rounded flex items-center justify-center font-bold text-sm shadow-sm border border-gold-200 animate-pulse">
+                            <i data-lucide="circle-dollar-sign" class="w-4 h-4 mr-2"></i>
+                            【 請務必主動告知掛帳金額 】
+                        </div>
+                        <p class="text-xs text-red-500 text-center font-bold mb-6">
+                            若未告知將會掛 普通 85折 / 商務 9折 / 優待 半價 / 團體票 95折
+                        </p>
+
+                        <!-- Route Selection -->
+                        <div class="bg-navy-50 p-4 rounded-lg mb-6 border border-navy-100">
+                            <div class="grid grid-cols-[1fr,auto,1fr] gap-2 items-center">
+                                <div>
+                                    <label class="text-[10px] font-bold text-navy-400 uppercase">From</label>
+                                    <select v-model="query.start" class="w-full font-bold text-navy-800 h-10 px-2">
+                                        <option v-for="s in stations" :value="s.name">{{ s.name }}</option>
+                                    </select>
+                                </div>
+                                <button @click="swapStations" class="p-2 bg-white rounded-full text-gold-600 shadow-sm border border-navy-100 hover:text-gold-700 mt-4">
+                                    <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+                                </button>
+                                <div>
+                                    <label class="text-[10px] font-bold text-navy-400 uppercase">To</label>
+                                    <select v-model="query.end" class="w-full font-bold text-navy-800 h-10 px-2">
+                                        <option v-for="s in stations" :value="s.name">{{ s.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggles -->
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold text-navy-400 uppercase">Class</label>
+                                <div class="flex flex-col gap-2">
+                                    <button @click="query.carType = 'standard'" :class="query.carType === 'standard' ? 'bg-navy-800 text-white' : 'bg-white text-navy-500 border border-navy-200'" class="py-2 rounded text-sm font-bold transition-all shadow-sm">標準</button>
+                                    <button @click="query.carType = 'business'" :class="query.carType === 'business' ? 'bg-gold-500 text-white' : 'bg-white text-navy-500 border border-navy-200'" class="py-2 rounded text-sm font-bold transition-all shadow-sm">商務</button>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold text-navy-400 uppercase">Type</label>
+                                <div class="flex flex-col gap-2">
+                                    <button @click="query.ticketType = 'adult'" :class="query.ticketType === 'adult' ? 'bg-navy-800 text-white' : 'bg-white text-navy-500 border border-navy-200'" class="py-2 rounded text-sm font-bold transition-all shadow-sm">全票</button>
+                                    <button @click="query.ticketType = 'concession'" :class="query.ticketType === 'concession' ? 'bg-navy-800 text-white' : 'bg-white text-navy-500 border border-navy-200'" class="py-2 rounded text-sm font-bold transition-all shadow-sm">優待</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price Result -->
+                        <div class="bg-white border-2 border-navy-100 rounded-lg p-4 text-center mb-6 shadow-inner">
+                            <p class="text-xs font-bold text-navy-400 uppercase mb-1">Estimated Fare</p>
+                            <div v-if="query.start === query.end" class="text-navy-400 font-bold text-sm">請選擇不同車站</div>
+                            <div v-else class="text-4xl font-mono font-bold text-navy-900">
+                                <span class="text-lg text-navy-400 mr-1">$</span>{{ formattedCalculatedPrice }}
+                            </div>
+                            <div class="mt-2 flex justify-center gap-2">
+                                <span class="text-[10px] font-bold bg-navy-50 text-navy-600 px-2 py-0.5 rounded">{{ getCarTypeName }}</span>
+                                <span class="text-[10px] font-bold bg-navy-50 text-navy-600 px-2 py-0.5 rounded">{{ getTicketTypeName }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Ticket Info (Collapsible) -->
+                        <div v-if="showTicketInfo" class="bg-navy-50 rounded p-4 mb-6 border border-navy-100">
+                            <div class="flex justify-between items-center mb-2 border-b border-navy-200 pb-2">
+                                <span class="text-xs font-bold text-navy-800">票種適用對象</span>
+                                <button @click="showTicketInfo = !showTicketInfo" class="text-xs text-gold-600 font-bold hover:underline">收合</button>
+                            </div>
+                            <ul class="text-xs text-navy-600 space-y-1.5 font-medium">
+                                <li><b class="text-navy-900">全票：</b>12歲以上。</li>
+                                <li><b class="text-navy-900">敬老：</b>65歲以上國民。</li>
+                                <li><b class="text-navy-900">孩童：</b>未滿12歲。115cm以下免票(限2人)。</li>
+                                <li><b class="text-navy-900">免票孩童：</b>0-5歲兒童不佔位可免費同行（每成人最多2位），需由已購票成人陪同。</li>
+                                <li><b class="text-navy-900">愛心/陪同：</b>身障證明 (註記必要陪伴者限1人)。</li>
+                                <li><b class="text-navy-900">團體：</b>11人以上，起訖/日期/車次需相同。</li>
+                            </ul>
+                        </div>
+                        <div v-else class="text-center mb-6">
+                            <button @click="showTicketInfo = !showTicketInfo" class="text-xs font-bold text-navy-400 hover:text-gold-600 flex items-center justify-center"><i data-lucide="chevron-down" class="w-3 h-3 mr-1"></i> 顯示票種說明</button>
+                        </div>
+
+                        <!-- Business Discount Calc -->
+                        <div class="pt-6 border-t-2 border-navy-100">
+                            <h3 class="text-sm font-bold text-navy-800 mb-3 flex items-center">
+                                <i data-lucide="percent" class="w-4 h-4 mr-2 text-gold-600"></i> 業務折扣計算機
+                            </h3>
+                            
+                            <div class="mb-4 text-[10px] bg-white border border-navy-100 p-2 rounded text-navy-500 font-medium">
+                                <span class="block mb-1">普通 <b class="text-navy-800">85折</b> / 商務 <b class="text-navy-800">9折</b> / 優待 <b class="text-navy-800">半價</b> / 團體票 <b class="text-navy-800">95折</b></span>
+                                <span class="text-gold-600">※ 業務利潤請自抓 (全票最低85折)</span>
+                            </div>
+
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="flex-1 relative">
+                                    <label class="absolute -top-2 left-2 bg-white px-1 text-[10px] font-bold text-navy-400">金額</label>
+                                    <input type="number" v-model.number="calc.amount" placeholder="0" class="w-full h-10 px-3 font-mono font-bold text-sm">
+                                </div>
+                                <div class="w-16 relative">
+                                    <label class="absolute -top-2 left-2 bg-white px-1 text-[10px] font-bold text-navy-400">%</label>
+                                    <input type="number" v-model.number="calc.rate" placeholder="100" class="w-full h-10 px-2 font-mono font-bold text-sm text-center">
+                                </div>
+                                <button v-if="calculatedPriceVal > 0" @click="copyPriceToCalculator" class="bg-navy-100 text-navy-600 hover:bg-navy-200 px-3 h-10 rounded text-xs font-bold transition-colors">
+                                    帶入
+                                </button>
+                            </div>
+                            
+                            <div class="bg-navy-800 text-white rounded p-3 flex justify-between items-center shadow-lg">
+                                <span class="text-xs text-navy-300 font-bold">折扣後金額</span>
+                                <span class="text-xl font-mono font-bold text-gold-500">${{ discountResult }}</span>
+                            </div>
+                            <div class="text-right mt-1">
+                                <span class="text-[10px] text-navy-400 font-bold">{{ discountText }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Pickup Method -->
+                <section class="prestige-card p-6">
+                    <div class="title-line text-base">
+                        <i data-lucide="ticket" class="w-4 h-4 mr-2 text-gold-600"></i> 取票方式
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-sm font-bold text-navy-700">
+                            <span class="w-6 h-6 bg-navy-100 text-navy-600 rounded-full flex items-center justify-center text-xs mr-3">1</span>
+                            紙本車票
+                        </li>
+                        <li class="flex items-center text-sm font-bold text-navy-700">
+                            <span class="w-6 h-6 bg-navy-100 text-navy-600 rounded-full flex items-center justify-center text-xs mr-3">2</span>
+                            <div>
+                                電子車票 <span class="text-xs text-navy-400 font-medium ml-1">(每位旅客皆需使用高鐵App)</span>
+                            </div>
+                        </li>
+                        <li class="flex items-center text-sm font-bold text-navy-700">
+                            <span class="w-6 h-6 bg-navy-100 text-navy-600 rounded-full flex items-center justify-center text-xs mr-3">3</span>
+                            <div>
+                                超商取票 <span class="text-xs text-navy-400 font-medium ml-1">(手續費自行負擔)</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="mt-4 text-xs font-bold text-navy-500 bg-navy-50 p-3 rounded text-center border border-navy-100 space-y-1">
+                        <p>※ 同一筆訂位代號僅能一種取票方式</p>
+                        <p class="text-red-600">※ 旅行社代售之高鐵票無法至高鐵站取票</p>
+                    </div>
+                </section>
+
+                <!-- Data Requirement -->
+                <section class="prestige-card p-6">
+                    <div class="title-line text-base">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 mr-2 text-gold-600"></i> 訂票所需資料
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs font-bold text-navy-600 bg-white border border-navy-200 px-2 py-1 rounded">日期</span>
+                        <span class="text-xs font-bold text-navy-600 bg-white border border-navy-200 px-2 py-1 rounded">起訖站</span>
+                        <span class="text-xs font-bold text-navy-600 bg-white border border-navy-200 px-2 py-1 rounded">班次與時間</span>
+                        <span class="text-xs font-bold text-navy-600 bg-white border border-navy-200 px-2 py-1 rounded">票種與張數</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-navy-600">
+                        <div class="flex justify-between items-center gap-12 border-b border-navy-50 pb-2">
+                            <span class="font-bold text-navy-900 whitespace-nowrap">全票</span>
+                            <span class="text-right">姓名、身分證字號、出生年月日</span>
+                        </div>
+                        <div class="flex justify-between items-center gap-12 border-b border-navy-50 pb-2">
+                            <span class="font-bold text-navy-900 whitespace-nowrap">優待 (孩童/敬老)</span>
+                            <span class="text-right">姓名、身分證字號、出生年月日</span>
+                        </div>
+                        <div class="flex justify-between items-center gap-12">
+                            <span class="font-bold text-navy-900 whitespace-nowrap">優待 (愛心/陪同)</span>
+                            <span class="text-right">姓名、身分證字號、出生年月日、身障手冊正反面影本</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact Info -->
+                <section class="bg-navy-900 rounded-lg p-6 text-white shadow-prestige">
+                    <h3 class="text-sm font-bold text-navy-200 uppercase tracking-widest mb-4">服務窗口</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-navy-700 pb-3">
+                            <span class="text-xs font-bold bg-navy-800 px-2 py-1 rounded text-gold-500">北區</span>
+                            <div class="text-right">
+                                <div class="font-bold text-sm">卓芷伶 #2696</div>
+                                <div class="text-[10px] text-navy-300">代理: 陳侑君</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-navy-700 pb-3">
+                            <span class="text-xs font-bold bg-navy-800 px-2 py-1 rounded text-gold-500">南區</span>
+                            <div class="text-right">
+                                <div class="font-bold text-sm">陳侑君 #7859</div>
+                                <div class="text-[10px] text-navy-300">代理: 卓芷伶</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-bold text-gold-500 mb-2 flex items-center">
+                                <i data-lucide="users" class="w-3 h-3 mr-1"></i> 團體票 / 高鐵假期
+                            </div>
+                            <div class="space-y-1 text-xs">
+                                <div class="flex justify-between"><span>卓芷伶</span> <span class="font-mono text-navy-300">#2696</span></div>
+                                <div class="flex justify-between"><span>李冠霖 經理</span> <span class="font-mono text-navy-300">#2692</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="lg:col-span-12 text-center py-8">
+                <p class="text-xs font-bold text-navy-400 tracking-wider">© Life Tour Co., Ltd. Internal Use Only.</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    processingRules: [
+                        { label: '訂票作業繁忙時', time: '於 3 個工作天內完成' },
+                        { label: '員工訂票', time: '須於搭乘日前 2 個工作天提出申請' },
+                        { label: '團體訂票', time: '須於搭乘日前 5 個工作天提出申請' }
+                    ],
+                    seatRules: [
+                        '座位皆由電腦自動劃位，恕無法指定座位，亦無法保證同行者為相鄰座位。',
+                        '一筆訂位代號最多 10 位旅客。',
+                        '不同起訖點為獨立一個訂位代號。'
+                    ],
+                    steps: [
+                        { title: '提供資料', icon: 'file-text' },
+                        { title: '開票', icon: 'monitor-check' },
+                        { title: '出票', icon: 'file-check' },
+                        { title: '取票', icon: 'ticket' }
+                    ],
+                    stations: [
+                        { name: '南港' }, { name: '台北' }, { name: '板橋' },
+                        { name: '桃園' }, { name: '新竹' }, { name: '苗栗' },
+                        { name: '台中' }, { name: '彰化' }, { name: '雲林' },
+                        { name: '嘉義' }, { name: '台南' }, { name: '左營' }
+                    ],
+                    standardFares: {
+                        '南港': { '台北': 40, '板橋': 70, '桃園': 200, '新竹': 330, '苗栗': 480, '台中': 750, '彰化': 870, '雲林': 930, '嘉義': 1120, '台南': 1390, '左營': 1530 },
+                        '台北': { '板橋': 40, '桃園': 160, '新竹': 290, '苗栗': 430, '台中': 700, '彰化': 820, '雲林': 930, '嘉義': 1080, '台南': 1350, '左營': 1490 },
+                        '板橋': { '桃園': 130, '新竹': 260, '苗栗': 400, '台中': 670, '彰化': 790, '雲林': 900, '嘉義': 1050, '台南': 1320, '左營': 1460 },
+                        '桃園': { '新竹': 130, '苗栗': 280, '台中': 540, '彰化': 670, '雲林': 780, '嘉義': 920, '台南': 1190, '左營': 1330 },
+                        '新竹': { '苗栗': 270, '台中': 390, '彰化': 500, '雲林': 640, '嘉義': 920, '台南': 1060, '左營': 1200 },
+                        '苗栗': { '台中': 270, '彰化': 390, '雲林': 500, '嘉義': 640, '台南': 920, '左營': 1060 },
+                        '台中': { '彰化': 130, '雲林': 230, '嘉義': 380, '台南': 650, '左營': 790 },
+                        '彰化': { '雲林': 110, '嘉義': 250, '台南': 530, '左營': 680 },
+                        '雲林': { '嘉義': 150, '台南': 420, '左營': 560 },
+                        '嘉義': { '台南': 280, '左營': 410 },
+                        '台南': { '左營': 140 }
+                    },
+                    businessFares: {
+                        '南港': { '台北': 260, '板橋': 310, '桃園': 500, '新竹': 700, '苗栗': 920, '台中': 1330, '彰化': 1510, '雲林': 1660, '嘉義': 1880, '台南': 2290, '左營': 2500 },
+                        '台北': { '板橋': 260, '桃園': 440, '新竹': 640, '苗栗': 850, '台中': 1250, '彰化': 1430, '雲林': 1600, '嘉義': 1820, '台南': 2230, '左營': 2440 },
+                        '板橋': { '桃園': 400, '新竹': 590, '苗栗': 800, '台中': 1210, '彰化': 1390, '雲林': 1550, '嘉義': 1780, '台南': 2180, '左營': 2390 },
+                        '桃園': { '新竹': 400, '苗栗': 620, '台中': 1010, '彰化': 1210, '雲林': 1370, '嘉義': 1580, '台南': 1990, '左營': 2200 },
+                        '新竹': { '苗栗': 410, '台中': 820, '彰化': 1010, '雲林': 1160, '嘉義': 1390, '台南': 1790, '左營': 2000 },
+                        '苗栗': { '台中': 610, '彰化': 790, '雲林': 950, '嘉義': 1160, '台南': 1580, '左營': 1790 },
+                        '台中': { '彰化': 400, '雲林': 550, '嘉義': 770, '台南': 1180, '左營': 1390 },
+                        '彰化': { '雲林': 370, '嘉義': 580, '台南': 1000, '左營': 1210 },
+                        '雲林': { '嘉義': 430, '台南': 830, '左營': 1040 },
+                        '嘉義': { '台南': 620, '左營': 820 },
+                        '台南': { '左營': 410 }
+                    },
+                    query: {
+                        start: '台北',
+                        end: '左營',
+                        carType: 'standard',
+                        ticketType: 'adult'
+                    },
+                    showTicketInfo: true,
+                    calc: { amount: '', rate: 100 }
+                }
+            },
+            computed: {
+                getCarTypeName() { return this.query.carType === 'standard' ? '標準車廂' : '商務車廂'; },
+                getTicketTypeName() { return this.query.ticketType === 'adult' ? '全票' : '優待票'; },
+                calculatedPriceVal() {
+                    if (this.query.start === this.query.end) return 0;
+                    const s = this.query.start, e = this.query.end;
+                    const matrix = this.query.carType === 'standard' ? this.standardFares : this.businessFares;
+                    let base = 0;
+                    if (matrix[s]?.[e]) base = matrix[s][e];
+                    else if (matrix[e]?.[s]) base = matrix[e][s];
+                    return this.query.ticketType === 'concession' ? Math.floor(base * 0.5) : base;
+                },
+                formattedCalculatedPrice() { return this.calculatedPriceVal.toLocaleString(); },
+                discountText() {
+                    if (!this.calc.rate || this.calc.rate === 100) return '原價';
+                    return (this.calc.rate % 10 === 0 ? (this.calc.rate / 10) : this.calc.rate) + '折';
+                },
+                discountResult() {
+                    return Math.round((this.calc.amount || 0) * ((this.calc.rate || 100) / 100)).toLocaleString();
+                }
+            },
+            methods: {
+                swapStations() { const temp = this.query.start; this.query.start = this.query.end; this.query.end = temp; },
+                copyPriceToCalculator() { this.calc.amount = this.calculatedPriceVal; }
+            },
+            mounted() { lucide.createIcons(); },
+            updated() { lucide.createIcons(); }
+        }).mount('#app');
+    </script>
+</body>
+</html>
