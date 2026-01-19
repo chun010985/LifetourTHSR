@@ -247,8 +247,16 @@
                             </div>
                         </div>
                         
-                        <div class="mt-4 text-center">
-                            <p class="text-sm font-bold text-navy-600 bg-navy-50 py-2 rounded border border-navy-100 mb-2">
+                        <div class="mt-6 text-center space-y-3">
+                            <!-- Prominent Alert -->
+                            <div class="bg-red-600 text-white p-3 rounded-md shadow-md border border-red-800 mx-auto max-w-md flex items-center justify-center gap-2">
+                                <i data-lucide="megaphone" class="w-5 h-5 flex-shrink-0"></i>
+                                <p class="text-sm font-bold tracking-wide">
+                                    作業忙碌中，訂票及掛帳請耐心等待，嚴禁催促。
+                                </p>
+                            </div>
+
+                            <p class="text-sm font-bold text-navy-600 bg-navy-50 py-2 rounded border border-navy-100">
                                 <i data-lucide="message-circle" class="w-4 h-4 inline-block mr-1 mb-0.5"></i> 請留 Slack 訊息或科威訊息
                             </p>
                             <p class="text-xs font-bold text-red-600">
@@ -601,9 +609,11 @@
                     ],
                     steps: [
                         { title: '提供資料', icon: 'file-text' },
+                        { title: '訂票作業', icon: 'settings-2' },
+                        { title: '確認可開票', icon: 'message-circle' },
                         { title: '開票', icon: 'monitor-check' },
                         { title: '出票', icon: 'file-check' },
-                        { title: '取票', icon: 'ticket' }
+                        { title: '掛帳', icon: 'credit-card' }
                     ],
                     stations: [
                         { name: '南港' }, { name: '台北' }, { name: '板橋' },
@@ -678,4 +688,3 @@
     </script>
 </body>
 </html>
-
