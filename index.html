@@ -236,9 +236,16 @@
                         </div>
                     </div>
 
-                    <p class="text-center text-xs font-bold text-navy-400 bg-navy-50 py-2 rounded">
-                        （以上作業時間皆以工作日計算，不含假日）
-                    </p>
+                    <div class="space-y-2">
+                        <p class="text-center text-xs font-bold text-navy-400 bg-navy-50 py-2 rounded">
+                            （以上作業時間皆以工作日計算，不含假日）
+                        </p>
+                        <!-- 新增的嚴格規範警告 -->
+                        <div class="flex justify-center items-center text-sm font-bold text-red-600 bg-red-50 py-2.5 px-4 rounded border border-red-100">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i>
+                            請務必遵守規範，未於規定時間內申請訂票，將不會進行作業。
+                        </div>
+                    </div>
 
                     <!-- Process Steps -->
                     <div class="mt-8">
@@ -262,7 +269,7 @@
                         
                         <div class="mt-6 text-center space-y-3">
                             <p class="text-sm font-bold text-navy-600 bg-navy-50 py-2 rounded border border-navy-100">
-                                <i data-lucide="message-circle" class="w-4 h-4 inline-block mr-1 mb-0.5"></i> 請留 Slack 訊息或科威訊息
+                                <i data-lucide="message-circle" class="w-4 h-4 inline-block mr-1 mb-0.5"></i> 請留 GoogleChat訊息 或 科威訊息
                             </p>
                             <p class="text-xs font-bold text-red-600">
                                 開票請於D/L前告知「可開票」，逾期系統將自動取消。
@@ -281,17 +288,22 @@
                         </ul>
                         
                         <!-- Foreign Group Rules (Moved here) -->
-                        <div class="mt-4 bg-blue-50 border border-blue-100 rounded p-3 text-left">
-                            <h5 class="text-xs font-bold text-blue-800 mb-1 flex items-center">
-                                <i data-lucide="plane" class="w-3 h-3 mr-1"></i> 國外團體掛帳說明
+                        <div class="mt-4 bg-blue-50 border border-blue-100 rounded p-4 text-left">
+                            <h5 class="text-sm font-bold text-blue-800 mb-2 flex items-center">
+                                <i data-lucide="plane" class="w-4 h-4 mr-1.5"></i> 導領／國外團體掛帳說明
                             </h5>
-                            <p class="text-xs text-blue-900 leading-relaxed font-medium">
+                            <p class="text-sm text-blue-900 leading-relaxed font-medium">
                                 國外團體需要購買高鐵票掛團帳用途是<span class="font-bold underline">開說明會、送機、帶團或隨團服務、標團</span>等特殊情況，需請國外線控或團控或OP發訊息給：
                             </p>
-                            <ul class="mt-1 text-xs text-blue-800 font-bold pl-2 border-l-2 border-blue-200 ml-1">
+                            <ul class="mt-2 text-sm text-blue-800 font-bold pl-3 border-l-2 border-blue-200 ml-1 space-y-1">
                                 <li>北區 & 中區：卓芷伶 & 李冠霖</li>
                                 <li>南區：陳侑君</li>
                             </ul>
+                            
+                            <div class="mt-3 pt-3 border-t border-blue-200 text-red-600 font-bold text-sm flex items-start">
+                                <i data-lucide="alert-triangle" class="w-4 h-4 mr-1.5 flex-shrink-0 mt-0.5"></i>
+                                <span>若未收到產品部門(線控/團控/OP)的訊息，將不會進行作業。</span>
+                            </div>
                         </div>
 
                         <div class="mt-4 bg-red-50 text-red-600 text-xs font-bold p-3 rounded border border-red-100 leading-relaxed">
@@ -650,7 +662,6 @@
                         { name: '台中' }, { name: '彰化' }, { name: '雲林' },
                         { name: '嘉義' }, { name: '台南' }, { name: '左營' }
                     ],
-                    // 校正後的標準車廂票價（對應圖片左下藍色區塊）
                     standardFares: {
                         '南港': { '台北': 40, '板橋': 70, '桃園': 200, '新竹': 330, '苗栗': 480, '台中': 750, '彰化': 870, '雲林': 970, '嘉義': 1120, '台南': 1390, '左營': 1530 },
                         '台北': { '板橋': 40, '桃園': 160, '新竹': 290, '苗栗': 430, '台中': 700, '彰化': 820, '雲林': 930, '嘉義': 1080, '台南': 1350, '左營': 1490 },
@@ -664,7 +675,6 @@
                         '嘉義': { '台南': 280, '左營': 410 },
                         '台南': { '左營': 140 }
                     },
-                    // 校正後的商務車廂票價（對應圖片右上粉紅區塊）
                     businessFares: {
                         '南港': { '台北': 260, '板橋': 310, '桃園': 500, '新竹': 700, '苗栗': 920, '台中': 1330, '彰化': 1510, '雲林': 1660, '嘉義': 1880, '台南': 2290, '左營': 2500 },
                         '台北': { '板橋': 260, '桃園': 440, '新竹': 640, '苗栗': 850, '台中': 1250, '彰化': 1430, '雲林': 1600, '嘉義': 1820, '台南': 2230, '左營': 2440 },
@@ -696,10 +706,8 @@
                     const s = this.query.start, e = this.query.end;
                     const matrix = this.query.carType === 'standard' ? this.standardFares : this.businessFares;
                     let base = 0;
-                    // 正反向皆可查詢
                     if (matrix[s]?.[e]) base = matrix[s][e];
                     else if (matrix[e]?.[s]) base = matrix[e][s];
-                    // 優待票為半價(無條件捨去小數點，因台灣票價均為10或5的倍數，直接乘0.5即可)
                     return this.query.ticketType === 'concession' ? Math.floor(base * 0.5) : base;
                 },
                 formattedCalculatedPrice() { return this.calculatedPriceVal.toLocaleString(); },
