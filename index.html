@@ -145,6 +145,36 @@
 
     <div id="app" class="min-h-screen flex flex-col items-center pt-12 pb-20 px-4 sm:px-6">
         
+        <!-- 🔴 Forced Announcement Modal (強制跳出公告) -->
+        <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showModal = false"></div>
+            
+            <!-- Modal Content -->
+            <div class="bg-white rounded-3xl w-full max-w-md relative z-10 shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+                <div class="bg-red-500 pt-8 pb-6 px-6 text-center relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 opacity-20">
+                        <i data-lucide="triangle-alert" class="w-32 h-32"></i>
+                    </div>
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner relative z-10">
+                        <i data-lucide="alert-octagon" class="w-8 h-8 text-red-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-white relative z-10">重要公告</h2>
+                </div>
+                <div class="p-6 md:p-8">
+                    <p class="text-slate-700 text-base font-bold leading-relaxed text-center mb-6">
+                        參團加購高鐵請留意：<br>
+                        因<span class="text-red-600 mx-1">航班延誤(非台灣本土不可抗力之因素)</span>導致無法於當日搭乘高鐵，<br>
+                        <span class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg inline-block mt-2 font-extrabold text-lg border border-red-200">將無法退費 / 改票</span><br>
+                        <span class="text-sm text-slate-500 mt-4 block">※ 若客人無法接受請勿訂票 ※</span>
+                    </p>
+                    <button @click="showModal = false" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 px-4 rounded-xl transition-colors shadow-md hover:shadow-lg flex justify-center items-center">
+                        <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i> 我已了解並同意
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Friendly Announcement Bar -->
         <div class="fixed top-0 left-0 w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white z-50 h-10 flex items-center overflow-hidden shadow-sm">
             <div class="whitespace-nowrap animate-marquee flex items-center font-bold text-sm tracking-wide px-4">
@@ -188,6 +218,27 @@
             <!-- Left Column: Operations & Rules -->
             <div class="lg:col-span-7 space-y-8">
                 
+                <!-- 🔴 In-page Urgent Notice Banner (網頁中固定提醒) -->
+                <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl p-5 shadow-floating text-white relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-20">
+                        <i data-lucide="plane-off" class="w-32 h-32 transform rotate-12"></i>
+                    </div>
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0 shadow-inner">
+                            <i data-lucide="triangle-alert" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-lg mb-1 flex items-center">
+                                參團加購高鐵 重要提醒！
+                            </h3>
+                            <p class="text-sm font-medium text-red-50 leading-relaxed">
+                                因 <strong class="text-white underline decoration-red-300">航班延誤(非台灣本土不可抗力之因素)</strong> 導致無法於當日搭乘高鐵，<strong class="text-yellow-300 bg-black/10 px-1 rounded">將無法退費或改票</strong>。<br>
+                                若客人無法接受此風險，請勿訂票！
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Section 1: Service Status & Rules -->
                 <section class="travel-card p-6 md:p-8">
                     <div class="flex items-center mb-6">
@@ -295,18 +346,21 @@
                             </div>
                             <div class="space-y-3 mb-6">
                                 <div class="flex items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
-                                    <div class="w-6 h-6 bg-slate-100 rounded-md flex items-center justify-center text-slate-500 mr-3 font-bold text-xs">1</div>
-                                    <span class="text-sm font-bold text-slate-700">紙本車票</span>
+                                    <div class="w-6 h-6 bg-slate-100 rounded-md flex items-center justify-center text-slate-500 mr-3 font-bold text-xs shrink-0">1</div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-700">紙本車票</span>
+                                        <span class="text-[10px] text-red-500 font-bold mt-0.5">收到後務必妥善保管，遺失恕無法重印</span>
+                                    </div>
                                 </div>
                                 <div class="flex items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
-                                    <div class="w-6 h-6 bg-slate-100 rounded-md flex items-center justify-center text-slate-500 mr-3 font-bold text-xs">2</div>
+                                    <div class="w-6 h-6 bg-slate-100 rounded-md flex items-center justify-center text-slate-500 mr-3 font-bold text-xs shrink-0">2</div>
                                     <div class="flex flex-col">
                                         <span class="text-sm font-bold text-slate-700">電子車票</span>
                                         <span class="text-[10px] text-slate-400 font-medium mt-0.5">每位旅客皆需使用高鐵App</span>
                                     </div>
                                 </div>
                                 <div class="flex items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
-                                    <div class="w-6 h-6 bg-slate-100 rounded-md flex items-center justify-center text-slate-500 mr-3 font-bold text-xs">3</div>
+                                    <div class="w-6 h-6 bg-slate-100 rounded-md flex items-center justify-center text-slate-500 mr-3 font-bold text-xs shrink-0">3</div>
                                     <div class="flex flex-col">
                                         <span class="text-sm font-bold text-slate-700">超商取票</span>
                                         <span class="text-[10px] text-slate-400 font-medium mt-0.5">手續費自行負擔</span>
@@ -314,9 +368,18 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs font-bold text-slate-500 space-y-1.5 text-center">
-                            <p>※ 同筆訂位代號僅能選 <strong class="text-slate-700">一種</strong> 取票方式</p>
-                            <p class="text-red-500">※ 旅行社代售之高鐵票「無法至高鐵站取票」</p>
+                        <div class="space-y-3">
+                            <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-start text-xs shadow-sm">
+                                <i data-lucide="info" class="w-4 h-4 text-blue-500 mr-2 shrink-0 mt-0.5"></i>
+                                <div class="text-blue-800 leading-relaxed font-medium">
+                                    <strong class="font-bold">溫馨提醒：</strong><br>
+                                    提醒各位業務若訂票時有<span class="font-bold text-blue-600">孩童、敬老票</span>建議使用實體票，因電子票每張票都需要有一支手機取票。
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs font-bold text-slate-500 space-y-1.5 text-center">
+                                <p>※ 同筆訂位代號僅能選 <strong class="text-slate-700">一種</strong> 取票方式</p>
+                                <p class="text-red-500">※ 旅行社代售之高鐵票「無法至高鐵站取票」</p>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -327,7 +390,7 @@
                         <i data-lucide="armchair" class="w-4 h-4 mr-2 text-primary-500"></i> 劃位與訂位限制
                     </h3>
                     <ul class="text-sm text-slate-600 space-y-1.5 font-medium ml-1">
-                        <li class="flex items-start"><span class="text-primary-400 mr-2 font-bold">•</span> 座位皆由電腦自動劃位，恕無法指定，亦不保證同行者相鄰。</li>
+                        <li class="flex items-start"><span class="text-primary-400 mr-2 font-bold">•</span> <span class="text-red-600 font-bold">座位為電腦系統劃位，無法保證座位連續性，亦無法指定座位與車廂。</span></li>
                         <li class="flex items-start"><span class="text-primary-400 mr-2 font-bold">•</span> 一筆訂位代號最多 <strong class="mx-1 text-slate-800">10 位</strong> 旅客。</li>
                         <li class="flex items-start"><span class="text-primary-400 mr-2 font-bold">•</span> 不同起訖點為獨立的訂位代號。</li>
                     </ul>
@@ -336,65 +399,161 @@
                 <!-- Required Data & Ticket Types -->
                 <section class="travel-card p-6">
                     <div class="flex items-center mb-5">
-                        <div class="icon-box bg-blue-50 text-blue-500 w-8 h-8 rounded-lg"><i data-lucide="clipboard-list" class="w-4 h-4"></i></div>
-                        <h3 class="font-bold text-slate-800">訂票所需資料與票種說明</h3>
+                        <div class="icon-box bg-blue-50 text-blue-500 w-8 h-8 rounded-lg"><i data-lucide="id-card" class="w-4 h-4"></i></div>
+                        <h3 class="font-bold text-slate-800">身份購票說明</h3>
                     </div>
-                    <div class="space-y-3">
-                        <div class="flex flex-col sm:flex-row sm:justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100 shadow-sm">
-                            <strong class="text-slate-800 mb-1 sm:mb-0 flex items-center">全票 <span class="text-[10px] text-slate-500 font-normal ml-2 bg-white px-1.5 py-0.5 rounded border border-slate-200">12歲以上</span></strong>
-                            <span class="text-xs text-slate-600 font-medium">需提供：姓名、身分證字號、生日</span>
+
+                    <!-- 訂票必備資料提醒 -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-4 mb-5 shadow-sm flex items-start">
+                        <div class="bg-white p-1.5 rounded-full mr-3 shrink-0 shadow-sm"><i data-lucide="clipboard-list" class="w-4 h-4 text-blue-500"></i></div>
+                        <div>
+                            <h4 class="font-bold text-blue-800 text-sm mb-1">訂票須提供資料</h4>
+                            <p class="text-xs text-blue-700 font-medium leading-relaxed">
+                                所有票種皆須提供：<strong class="bg-white px-1.5 py-0.5 rounded border border-blue-100 mx-0.5">姓名</strong>、<strong class="bg-white px-1.5 py-0.5 rounded border border-blue-100 mx-0.5">身分證字號</strong>、<strong class="bg-white px-1.5 py-0.5 rounded border border-blue-100 mx-0.5">出生年月日</strong>。<br>
+                                愛心票須額外提供：<strong class="text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-100 mx-0.5">身心障礙手冊正反面影本</strong>。
+                            </p>
                         </div>
-                        <div class="flex flex-col sm:flex-row sm:justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100 shadow-sm">
-                            <strong class="text-slate-800 mb-1 sm:mb-0 flex items-center">優待票 <span class="text-[10px] text-slate-500 font-normal ml-2 bg-white px-1.5 py-0.5 rounded border border-slate-200">敬老65歲以上 / 孩童未滿12歲</span></strong>
-                            <span class="text-xs text-slate-600 font-medium">需提供：姓名、身分證字號、生日</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        <!-- 成人票 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 transition-all shadow-sm hover:shadow-md relative overflow-hidden group">
+                            <div class="absolute -right-3 -bottom-3 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-300 transform group-hover:scale-110">
+                                <i data-lucide="user" class="w-20 h-20 text-slate-800"></i>
+                            </div>
+                            <div class="flex items-center mb-2 relative z-10">
+                                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center mr-3 shadow-inner">
+                                    <i data-lucide="user" class="w-4 h-4"></i>
+                                </div>
+                                <strong class="text-slate-800 text-sm">成人票</strong>
+                            </div>
+                            <p class="text-xs text-slate-600 font-medium leading-relaxed relative z-10 pl-11">
+                                乘車當日年滿 12 歲至 64 歲之旅客，須購買全票搭乘。
+                            </p>
                         </div>
-                        <div class="flex flex-col sm:flex-row sm:justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100 shadow-sm">
-                            <strong class="text-slate-800 mb-1 sm:mb-0 flex items-center">免票孩童 <span class="text-[10px] text-slate-500 font-normal ml-2 bg-white px-1.5 py-0.5 rounded border border-slate-200">115cm以下 或 0-5歲</span></strong>
-                            <span class="text-xs text-slate-600 font-medium">每位成人限2位，需同行免購票</span>
+
+                        <!-- 孩童票 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:border-orange-300 transition-all shadow-sm hover:shadow-md relative overflow-hidden group">
+                            <div class="absolute -right-3 -bottom-3 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-300 transform group-hover:scale-110">
+                                <i data-lucide="smile" class="w-20 h-20 text-orange-600"></i>
+                            </div>
+                            <div class="flex items-center mb-2 relative z-10">
+                                <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mr-3 shadow-inner border border-orange-100">
+                                    <i data-lucide="smile" class="w-4 h-4"></i>
+                                </div>
+                                <strong class="text-slate-800 text-sm">孩童票</strong>
+                            </div>
+                            <p class="text-xs text-slate-600 font-medium leading-relaxed relative z-10 pl-11">
+                                乘車當日年滿 6 歲至未滿 12 歲。若身高超過 150 公分但未滿 12 歲者，請出示身分證明文件以利查驗。
+                            </p>
                         </div>
-                        <div class="flex flex-col sm:flex-row sm:justify-between p-3.5 bg-blue-50 rounded-xl border border-blue-100 shadow-sm">
-                            <strong class="text-blue-800 mb-1 sm:mb-0">愛心 / 陪同票</strong>
-                            <span class="text-xs text-blue-700 font-medium">需提供同上資料 ＋ <strong class="text-red-500 bg-white px-1 rounded">身障證明正反面影本</strong> <span class="opacity-80">(陪伴限1人)</span></span>
+
+                        <!-- 免票孩童 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:border-emerald-300 transition-all shadow-sm hover:shadow-md relative overflow-hidden group">
+                            <div class="absolute -right-3 -bottom-3 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-300 transform group-hover:scale-110">
+                                <i data-lucide="baby" class="w-20 h-20 text-emerald-600"></i>
+                            </div>
+                            <div class="flex items-center mb-2 relative z-10">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mr-3 shadow-inner border border-emerald-100">
+                                    <i data-lucide="baby" class="w-4 h-4"></i>
+                                </div>
+                                <strong class="text-slate-800 text-sm">免票孩童</strong>
+                            </div>
+                            <p class="text-xs text-slate-600 font-medium leading-relaxed relative z-10 pl-11">
+                                身高未滿 115 公分，或超過 115 公分但未滿 6 歲不佔位得免票(需出示證明)。需由已購全票或成年旅客陪同，每人限帶 2 名。若需佔位應購買孩童票。
+                            </p>
                         </div>
-                        <div class="flex flex-col sm:flex-row sm:justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100 shadow-sm">
-                            <strong class="text-slate-800 mb-1 sm:mb-0 flex items-center">團體票 <span class="text-[10px] text-slate-500 font-normal ml-2 bg-white px-1.5 py-0.5 rounded border border-slate-200">11人以上，起訖/日期/車次需相同</span></strong>
-                            <span class="text-xs text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded border border-red-100">※ 4/27起為原價</span>
+
+                        <!-- 敬老票 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:border-teal-300 transition-all shadow-sm hover:shadow-md relative overflow-hidden group">
+                            <div class="absolute -right-3 -bottom-3 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-300 transform group-hover:scale-110">
+                                <i data-lucide="heart-handshake" class="w-20 h-20 text-teal-600"></i>
+                            </div>
+                            <div class="flex items-center mb-2 relative z-10">
+                                <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center mr-3 shadow-inner border border-teal-100">
+                                    <i data-lucide="heart-handshake" class="w-4 h-4"></i>
+                                </div>
+                                <strong class="text-slate-800 text-sm">敬老票</strong>
+                            </div>
+                            <p class="text-xs text-slate-600 font-medium leading-relaxed relative z-10 pl-11">
+                                乘車當日年滿 65 歲(含)以上之中華民國國民，憑有效之身分證明文件得購買敬老票。
+                            </p>
                         </div>
+
+                        <!-- 愛心 / 陪同票 -->
+                        <div class="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-xl p-4 hover:border-blue-400 transition-all shadow-sm hover:shadow-md relative overflow-hidden group">
+                            <div class="absolute -right-3 -bottom-3 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-300 transform group-hover:scale-110">
+                                <i data-lucide="accessibility" class="w-20 h-20 text-blue-600"></i>
+                            </div>
+                            <div class="flex items-center mb-2 relative z-10">
+                                <div class="w-8 h-8 rounded-lg bg-white text-blue-600 flex items-center justify-center mr-3 shadow-sm border border-blue-100">
+                                    <i data-lucide="accessibility" class="w-4 h-4"></i>
+                                </div>
+                                <strong class="text-blue-800 text-sm">愛心 / 陪同票</strong>
+                            </div>
+                            <p class="text-xs text-blue-700 font-medium leading-relaxed relative z-10 pl-11">
+                                持有身心障礙證明之中華民國國民。（證明背面「必要陪伴者優惠措施」須註記有「國內大眾運輸工具」字樣，始提供陪伴者一人愛心票優惠）。<br>
+                                <span class="text-[11px] font-bold text-red-500 mt-1.5 inline-block">※ 須提供身心障礙手冊正反面影本</span>
+                            </p>
+                        </div>
+
+                        <!-- 團體票 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:border-purple-300 transition-all shadow-sm hover:shadow-md relative overflow-hidden group">
+                            <div class="absolute -right-3 -bottom-3 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-300 transform group-hover:scale-110">
+                                <i data-lucide="users" class="w-20 h-20 text-purple-600"></i>
+                            </div>
+                            <div class="flex items-center mb-2 relative z-10 justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mr-3 shadow-inner border border-purple-100">
+                                        <i data-lucide="users" class="w-4 h-4"></i>
+                                    </div>
+                                    <strong class="text-slate-800 text-sm">團體票</strong>
+                                    <span class="text-[10px] text-slate-500 font-normal ml-2 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">內部規定</span>
+                                </div>
+                            </div>
+                            <div class="pl-11 relative z-10">
+                                <p class="text-xs text-slate-600 font-medium leading-relaxed mb-2">
+                                    11人以上，起訖/日期/車次需相同。
+                                </p>
+                                <span class="text-xs text-red-600 font-bold bg-red-50 px-2 py-1 rounded-md border border-red-100 inline-block shadow-sm">※ 4/27起為原價</span>
+                            </div>
+                        </div>
+
                     </div>
                 </section>
 
-                <!-- Refund Policy -->
+                <!-- Refund Policy & Ticket Usage Rules -->
                 <section class="travel-card overflow-hidden">
                     <div class="bg-slate-800 px-6 py-4 flex items-center">
                         <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white mr-3">
                             <i data-lucide="refresh-ccw" class="w-4 h-4"></i>
                         </div>
-                        <h2 class="text-base font-bold text-white">退改票規則與注意事項</h2>
+                        <h2 class="text-base font-bold text-white">票務說明及退改票規則</h2>
                     </div>
                     <div class="p-6 md:p-8">
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                             <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">申請期限</span>
-                                <p class="text-sm font-bold text-slate-800">搭乘日前 <span class="text-red-600 text-lg mx-1">4</span> 個工作日</p>
-                                <span class="text-[9px] text-slate-500">天災導致停駛者不在此限</span>
+                                <p class="text-sm font-bold text-slate-800">出發日前 <span class="text-red-600 text-lg mx-1">4</span> 個工作日</p>
+                                <span class="text-[9px] text-slate-500">營業時間內通知客服辦理</span>
                             </div>
                             <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">手續費</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">退改手續費</span>
                                 <p class="text-lg font-bold text-red-600">NT$ 50 <span class="text-xs text-slate-500 font-medium">/張</span></p>
                             </div>
                             <div class="col-span-2 md:col-span-1 bg-red-50 p-4 rounded-2xl border border-red-100">
                                 <span class="text-[10px] font-bold text-red-400 uppercase block mb-1">必備文件</span>
-                                <p class="text-sm font-bold text-red-800">原紙本票根 <span class="text-xs font-normal">或</span> APP截圖</p>
+                                <p class="text-sm font-bold text-red-800">原實體票根 <span class="text-xs font-normal">或</span> APP截圖</p>
                                 <span class="text-[9px] text-red-500 font-bold mt-1 block">※未提供視同搭乘，費用自負</span>
                             </div>
                         </div>
 
                         <div class="bg-white border border-slate-200 rounded-2xl p-5 mb-5 shadow-sm">
-                            <ul class="text-sm text-slate-600 space-y-2.5 font-medium">
-                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0"></i> 車票須於搭乘當日使用，逾期視同廢票。</li>
-                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0"></i> <span class="text-red-600 font-bold mr-1">逾時未搭乘：</span>請自行洽站務員改搭當日自由座，恕無法退票。</li>
-                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0"></i> 自114/11/10起，旅行社代訂票券<strong class="text-slate-800 mx-1">「無法提早搭乘」</strong>僅能延後(自由座)。</li>
-                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0"></i> <strong class="text-slate-800 mr-1">非高鐵因素：</strong>航班延誤取消等致無法搭乘，無法改期退票。</li>
+                            <ul class="text-sm text-slate-600 space-y-3 font-medium">
+                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0 mt-0.5"></i> 本車票在全台高鐵站現場（含售票窗口、機台），皆不受理取票、退票、換票、改票或補票價差之作業。</li>
+                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0 mt-0.5"></i> <span class="text-red-600 font-bold mr-1">錯過班次：</span>如乘車不及，限搭乘「當日」往後班次之自由座車廂，逾期視同廢票，請務必於乘車當日使用完畢。</li>
+                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0 mt-0.5"></i> <strong class="text-slate-800 mr-1">非高鐵因素：</strong>若因航班延誤(非台灣本土不可抗力之因素)、取消等導致無法搭乘者，車票恕無法改期或退票，敬請見諒；若無法接受此規定，請斟酌訂購。</li>
                             </ul>
                         </div>
                         
@@ -410,6 +569,30 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- FAQ Section -->
+                <section class="travel-card p-6 md:p-8 border-t-4 border-t-secondary-500">
+                    <div class="flex items-center mb-6">
+                        <div class="icon-box bg-secondary-50 text-secondary-500"><i data-lucide="message-circle-question" class="w-5 h-5"></i></div>
+                        <h2 class="text-lg font-bold text-slate-800">高鐵常見 Q&A</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div v-for="(faq, index) in faqs" :key="index" class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <button @click="faq.open = !faq.open" class="w-full flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 transition-colors text-left font-bold text-slate-800 text-sm focus:outline-none">
+                                <span class="flex items-start gap-3 pr-4">
+                                    <span class="text-secondary-500 font-extrabold shrink-0">Q{{ index + 1 }}.</span>
+                                    <span>{{ faq.q }}</span>
+                                </span>
+                                <i data-lucide="chevron-down" :class="{'rotate-180': faq.open}" class="w-4 h-4 text-slate-400 transition-transform shrink-0"></i>
+                            </button>
+                            <div v-show="faq.open" class="p-4 text-sm text-slate-600 bg-white leading-relaxed border-t border-slate-100 font-medium">
+                                <span class="text-emerald-600 font-extrabold mr-2">A.</span>{{ faq.a }}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
             </div>
 
             <!-- Right Column: Interactive Booking Widget -->
@@ -507,7 +690,7 @@
                         <!-- Business Calculator -->
                         <div class="space-y-4">
                             
-                            <!-- Important Warning (Animation removed) -->
+                            <!-- Important Warning -->
                             <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-xl flex items-start text-xs font-bold shadow-sm">
                                 <div class="bg-white p-1.5 rounded-full mr-2 shrink-0 shadow-sm"><i data-lucide="circle-dollar-sign" class="w-4 h-4 text-yellow-600"></i></div>
                                 <div class="text-yellow-800 leading-relaxed">
@@ -612,7 +795,7 @@
             <!-- Footer -->
             <div class="lg:col-span-12 flex flex-col items-center pt-6 border-t border-slate-200 mt-4 gap-1">
                 <p class="text-[11px] font-bold text-slate-400 tracking-widest uppercase">© Life Tour Internal System. All rights reserved.</p>
-                <p class="text-[10px] font-medium text-slate-400/80">最後更新時間：2026/04/28</p>
+                <p class="text-[10px] font-medium text-slate-400/80">最後更新時間：2026/04/29</p>
             </div>
 
         </main>
@@ -624,9 +807,9 @@
         createApp({
             data() {
                 return {
+                    showModal: true, // 控制強制彈窗顯示
                     processingRules: [
-                        { label: '訂票作業繁忙時', time: '3 個工作天內完成' },
-                        { label: '員工訂票', time: '搭乘日前 2 個工作天' },
+                        { label: '一般訂票 (不接急單)', time: '搭乘日前 2 個工作天' },
                         { label: '團體訂票', time: '搭乘日前 5 個工作天' }
                     ],
                     steps: [
@@ -636,6 +819,12 @@
                         { title: '開票' },
                         { title: '出票' },
                         { title: '掛帳' }
+                    ],
+                    faqs: [
+                        { q: '高鐵車票開放訂票規則？', a: '可預訂 29 天內（含乘車當日）之車票，且每逢週五及週六至多可預訂四週後至週日之車票。（連續假期或疏運期間之訂位，依高鐵公司官方公告為主）。', open: false },
+                        { q: '訂購高鐵假期可以累積高鐵 TGo 會員點數嗎？', a: '可以。以高鐵 TGo 會員身分訂購高鐵假期行程，且於訂購時填寫正確身分證字號，即可累積高鐵 TGo 會員點數。', open: false },
+                        { q: '請問購買高鐵假期，可以指定車廂或座位嗎？', a: '高鐵座位均由電腦系統自動劃位，無法保證座位的連續性，恕無法開放指定座位及車廂。', open: false },
+                        { q: '為什麼不能去高鐵櫃檯領票、換票或退票呢？', a: '高鐵假期/自組行程商品為專案優惠套票，高鐵車站售票櫃檯、便利商店及高鐵手機 APP 皆無法辦理。如有行程變更、退改票等相關需求，請務必洽詢「五福旅行社」辦理。', open: false }
                     ],
                     stations: [
                         { name: '南港' }, { name: '台北' }, { name: '板橋' },
