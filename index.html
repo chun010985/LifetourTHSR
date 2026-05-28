@@ -163,14 +163,77 @@
                 </div>
                 <div class="p-6 md:p-8">
                     <p class="text-slate-700 text-base font-bold leading-relaxed text-center mb-6">
-                        參團加購高鐵請留意：<br>
-                        因<span class="text-red-600 mx-1">航班延誤(非台灣本土不可抗力之因素)</span>導致無法於當日搭乘高鐵，<br>
-                        <span class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg inline-block mt-2 font-extrabold text-lg border border-red-200">將無法退費 / 改票</span><br>
-                        <span class="text-sm text-slate-500 mt-4 block">※ 若客人無法接受請勿訂票 ※</span>
+                        <span class="text-xl text-red-600 block mb-2">🚨參團加購高鐵請留意🚨</span>
+                        因國外航班延誤或取消導致無法搭乘高鐵，除「台灣本土天災(不可抗力因素)導致班機異動」可受理退改票外<br>
+                        <span class="bg-red-100 text-red-700 px-3 py-2.5 rounded-lg inline-block mt-3 mb-2 font-extrabold text-sm border border-red-200 text-left">
+                            其餘非高鐵因素（包含國外天災、當地氣候惡劣、航空公司調度等），恕皆無法辦理改期或退票。
+                        </span><br>
+                        <span class="text-sm text-slate-500 mt-2 block">※ 若客人不能接受，建議回程自理保留彈性 ※</span>
                     </p>
                     <button @click="showModal = false" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 px-4 rounded-xl transition-colors shadow-md hover:shadow-lg flex justify-center items-center">
                         <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i> 我已了解並同意
                     </button>
+                </div>
+            </div>
+        </div>
+
+                <!-- 📊 Fare Table Modal (票價總表) -->
+        <div v-if="showTableModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showTableModal = false"></div>
+            
+            <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col relative z-10 shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+                <!-- Header -->
+                <div class="bg-slate-800 pt-6 pb-4 px-6 flex justify-between items-center shrink-0">
+                    <h2 class="text-xl font-extrabold text-white flex items-center">
+                        <i data-lucide="table-2" class="w-6 h-6 mr-2 text-primary-400"></i> 高鐵完整票價表
+                    </h2>
+                    <button @click="showTableModal = false" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="flex border-b border-slate-200 shrink-0 bg-slate-50 px-4 pt-2 overflow-x-auto">
+                    <button @click="activeTableTab = 'discount'" :class="{'border-b-2 border-primary-500 text-primary-600 font-bold': activeTableTab === 'discount', 'text-slate-500 font-medium hover:text-slate-700': activeTableTab !== 'discount'}" class="px-5 py-3 text-sm transition-colors whitespace-nowrap">
+                        平日單程票價 (藍底85折/紅底95折)
+                    </button>
+                    <button @click="activeTableTab = 'concession'" :class="{'border-b-2 border-primary-500 text-primary-600 font-bold': activeTableTab === 'concession', 'text-slate-500 font-medium hover:text-slate-700': activeTableTab !== 'concession'}" class="px-5 py-3 text-sm transition-colors whitespace-nowrap">
+                        優待票種 (單程半價)
+                    </button>
+                    <button @click="activeTableTab = 'original'" :class="{'border-b-2 border-primary-500 text-primary-600 font-bold': activeTableTab === 'original', 'text-slate-500 font-medium hover:text-slate-700': activeTableTab !== 'original'}" class="px-5 py-3 text-sm transition-colors whitespace-nowrap">
+                        普通成人票 (單程原價)
+                    </button>
+                </div>
+
+                <!-- Table Content -->
+                <div class="p-4 sm:p-6 overflow-auto flex-1 bg-white">
+                    <div class="min-w-[800px]">
+                        <table class="w-full text-center border-collapse text-sm">
+                            <thead>
+                                <tr>
+                                    <th class="border border-slate-200 bg-slate-100 p-2 font-bold text-slate-700 w-16">車站</th>
+                                    <th v-for="s in stations" :key="s.name" class="border border-slate-200 bg-slate-100 p-2 font-bold text-slate-700 w-20">{{ s.name }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(rowStation, rIdx) in stations" :key="rowStation.name">
+                                    <td class="border border-slate-200 bg-slate-100 p-2 font-bold text-slate-700">{{ rowStation.name }}</td>
+                                    <td v-for="(colStation, cIdx) in stations" :key="colStation.name" 
+                                        class="border border-slate-200 p-2 font-bold text-sm transition-colors"
+                                        :class="getCellClass(rIdx, cIdx)">
+                                        {{ getMatrixCell(rIdx, cIdx) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Legend -->
+                    <div class="mt-6 flex flex-col gap-2 text-xs font-bold text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="flex items-center"><span class="w-3 h-3 bg-blue-100 border border-blue-300 inline-block mr-2 rounded-sm"></span> 藍底區塊為標準車廂 {{ activeTableTab === 'discount' ? '85折' : (activeTableTab === 'concession' ? '優待票' : '全票') }}票價</div>
+                        <div class="flex items-center"><span class="w-3 h-3 bg-red-100 border border-red-300 inline-block mr-2 rounded-sm"></span> 橘紅底區塊為商務車廂 {{ activeTableTab === 'discount' ? '95折' : (activeTableTab === 'concession' ? '優待票' : '全票') }}票價</div>
+                        <div class="flex items-start text-red-500 mt-1"><i data-lucide="asterisk" class="w-3.5 h-3.5 mr-1 mt-0.5 shrink-0"></i> 註解：南港─台北、南港─板橋、台北─板橋區間，恕不發售商務車廂折扣車票，一律以原價計算。</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -553,7 +616,7 @@
                             <ul class="text-sm text-slate-600 space-y-3 font-medium">
                                 <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0 mt-0.5"></i> 本車票在全台高鐵站現場（含售票窗口、機台），皆不受理取票、退票、換票、改票或補票價差之作業。</li>
                                 <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0 mt-0.5"></i> <span class="text-red-600 font-bold mr-1">錯過班次：</span>如乘車不及，限搭乘「當日」往後班次之自由座車廂，逾期視同廢票，請務必於乘車當日使用完畢。</li>
-                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0 mt-0.5"></i> <strong class="text-slate-800 mr-1">非高鐵因素：</strong>若因航班延誤(非台灣本土不可抗力之因素)、取消等導致無法搭乘者，車票恕無法改期或退票，敬請見諒；若無法接受此規定，請斟酌訂購。</li>
+                                <li class="flex"><i data-lucide="dot" class="w-5 h-5 text-slate-300 shrink-0 mt-0.5"></i> <strong class="text-slate-800 mr-1">非高鐵因素：</strong>因國外航班延誤或取消導致無法搭乘高鐵，除「台灣本土天災(不可抗力因素)導致班機異動」可受理退改票外，其餘非高鐵因素（包含國外天災、當地氣候惡劣、航空公司調度等），恕皆無法辦理改期或退票。若客人不能接受，建議回程自理保留彈性。</li>
                             </ul>
                         </div>
                         
@@ -680,6 +743,36 @@
                             </div>
                         </div>
 
+                        <!-- 🌟 NEW FARE RULES SECTION -->
+                        <div class="bg-gradient-to-br from-blue-50 to-slate-50 border border-blue-100 rounded-2xl p-4 mb-6 shadow-sm">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded mr-2 tracking-widest">6/1 起</div>
+                                <h4 class="text-sm font-bold text-blue-900">最新票價優惠規則</h4>
+                            </div>
+                            <div class="space-y-2.5 text-xs font-medium text-slate-700">
+                                <div class="flex items-start bg-white p-2 rounded-xl border border-blue-50 shadow-sm">
+                                    <div class="bg-slate-100 text-slate-600 font-bold rounded px-1.5 py-0.5 mr-2 shrink-0">標準車廂</div>
+                                    <div class="leading-relaxed mt-0.5">
+                                        平日 (週一至週四) 全票 <strong class="text-blue-600 mx-0.5">85折</strong><br>
+                                        假日 (週五至週日) & 高鐵疏運期間 <strong class="text-red-500 mx-0.5">原價無折扣</strong><br>
+                                        優待票 <strong class="text-slate-700 mx-0.5">全票半價</strong>
+                                    </div>
+                                </div>
+                                <div class="flex items-start bg-white p-2 rounded-xl border border-blue-50 shadow-sm">
+                                    <div class="bg-slate-100 text-slate-600 font-bold rounded px-1.5 py-0.5 mr-2 shrink-0">商務車廂</div>
+                                    <div class="leading-relaxed mt-0.5">
+                                        平日 (週一至週四) 全票 <strong class="text-blue-600 mx-0.5">95折</strong><br>
+                                        假日 (週五至週日) & 高鐵疏運期間 <strong class="text-red-500 mx-0.5">原價無折扣</strong><br>
+                                        優待票 <strong class="text-slate-700 mx-0.5">全票半價</strong>
+                                    </div>
+                                </div>
+                                <div class="flex items-center bg-white p-2 rounded-xl border border-blue-50 shadow-sm">
+                                    <div class="bg-slate-100 text-slate-600 font-bold rounded px-1.5 py-0.5 mr-2 shrink-0">團體票</div>
+                                    <div class="mt-0.5 text-red-500 font-bold">原價無折扣</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Divider line -->
                         <div class="border-t border-slate-100 my-6 relative">
                             <div class="absolute left-1/2 -top-3 transform -translate-x-1/2 bg-white px-4 text-xs font-bold text-slate-300">
@@ -691,12 +784,12 @@
                         <div class="space-y-4">
                             
                             <!-- Important Warning -->
-                            <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-xl flex items-start text-xs font-bold shadow-sm">
-                                <div class="bg-white p-1.5 rounded-full mr-2 shrink-0 shadow-sm"><i data-lucide="circle-dollar-sign" class="w-4 h-4 text-yellow-600"></i></div>
+                            <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-xl flex items-center text-xs font-bold shadow-sm">
+                                <div class="bg-white p-1.5 rounded-full mr-3 shrink-0 shadow-sm"><i data-lucide="circle-dollar-sign" class="w-4 h-4 text-yellow-600"></i></div>
                                 <div class="text-yellow-800 leading-relaxed">
                                     【請務必主動告知掛帳金額】<br>
-                                    <span class="font-medium">未告知將掛：普通85折/商務9折/優待半價/團體原價。</span>
-                                    <div class="text-primary-600 mt-0.5">※ 業務利潤請自抓 (全票最低85折)</div>
+                                    <span class="font-medium leading-loose">未告知將掛：<strong class="text-red-600 bg-red-50 px-1 rounded border border-red-100">6/1起</strong> 標準車廂 平日（週一至周四）85折、假日及疏運期間 原價無折扣 / 商務95折 / 優待半價 / 團體原價。</span>
+                                    <div class="text-primary-600 mt-1">※ 業務利潤請自抓</div>
                                 </div>
                             </div>
 
@@ -728,6 +821,11 @@
                                     <span class="text-lg text-primary-400 mr-1">$</span>{{ discountResult }}
                                 </div>
                             </div>
+
+                            <!-- Modal Trigger Button -->
+                            <button @click="showTableModal = true" class="w-full mt-2 py-3.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-bold transition-colors flex items-center justify-center shadow-md group">
+                                <i data-lucide="table-2" class="w-4 h-4 mr-2 text-slate-300 group-hover:text-white transition-colors"></i> 查看高鐵完整票價總表
+                            </button>
 
                         </div>
                     </div>
@@ -775,18 +873,23 @@
                 </section>
 
                 <!-- External Links (App Icons Style) -->
-                <section class="flex gap-3">
-                    <a href="https://www.thsrc.com.tw/" target="_blank" class="flex-1 flex flex-col items-center justify-center py-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-primary-300 hover:-translate-y-1 transition-all group">
+                <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <a href="https://www.thsrc.com.tw/" target="_blank" class="flex flex-col items-center justify-center py-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-primary-300 hover:-translate-y-1 transition-all group">
                         <div class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center mb-2 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors"><i data-lucide="external-link" class="w-5 h-5"></i></div>
                         <span class="text-[11px] font-bold text-slate-600">高鐵官網</span>
                     </a>
-                    <a href="https://www.thsrc.com.tw/ArticleContent/a3b630bb-1066-4352-a1ef-58c7b4e8ef7c" target="_blank" class="flex-1 flex flex-col items-center justify-center py-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-primary-300 hover:-translate-y-1 transition-all group">
+                    <a href="https://www.thsrc.com.tw/ArticleContent/a3b630bb-1066-4352-a1ef-58c7b4e8ef7c" target="_blank" class="flex flex-col items-center justify-center py-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-primary-300 hover:-translate-y-1 transition-all group">
                         <div class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center mb-2 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors"><i data-lucide="clock" class="w-5 h-5"></i></div>
                         <span class="text-[11px] font-bold text-slate-600">時刻表</span>
                     </a>
-                    <a href="https://www.thsrc.com.tw/ArticleContent/58764cad-504a-486c-b1dc-f42aaa4f3552" target="_blank" class="flex-1 flex flex-col items-center justify-center py-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-primary-300 hover:-translate-y-1 transition-all group">
+                    <a href="https://www.thsrc.com.tw/ArticleContent/58764cad-504a-486c-b1dc-f42aaa4f3552" target="_blank" class="flex flex-col items-center justify-center py-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-primary-300 hover:-translate-y-1 transition-all group">
                         <div class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center mb-2 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors"><i data-lucide="smartphone" class="w-5 h-5"></i></div>
                         <span class="text-[11px] font-bold text-slate-600">App教學</span>
+                    </a>
+                    <!-- New External Link for 2026 疏運日期查詢 -->
+                    <a href="https://www.thsrc.com.tw/ArticleContent/60dbfb79-ac20-4280-8ffb-b09e7c94f043" target="_blank" class="flex flex-col items-center justify-center py-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-primary-300 hover:-translate-y-1 transition-all group">
+                        <div class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center mb-2 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors"><i data-lucide="calendar-search" class="w-5 h-5"></i></div>
+                        <span class="text-[11px] font-bold text-slate-600">疏運日期</span>
                     </a>
                 </section>
 
@@ -817,6 +920,8 @@
             data() {
                 return {
                     showModal: true, // 控制強制彈窗顯示
+                    showTableModal: false, // 控制票價總表顯示
+                    activeTableTab: 'discount', // 票價總表當前頁籤 (discount | concession | original)
                     processingRules: [
                         { label: '一般訂票 (不接急單)', time: '搭乘日前 2 個工作天' },
                         { label: '團體訂票', time: '搭乘日前 5 個工作天' }
@@ -884,17 +989,9 @@
                     if (this.query.start === this.query.end) return 0;
                     const s = this.query.start, e = this.query.end;
                     
-                    // 取得標準車廂原價
-                    let standardBase = 0;
-                    if (this.standardFares[s]?.[e]) standardBase = this.standardFares[s][e];
-                    else if (this.standardFares[e]?.[s]) standardBase = this.standardFares[e][s];
+                    let standardBase = this.getBaseFare(s, e, false);
+                    let businessBase = this.getBaseFare(s, e, true);
 
-                    // 取得商務車廂原價
-                    let businessBase = 0;
-                    if (this.businessFares[s]?.[e]) businessBase = this.businessFares[s][e];
-                    else if (this.businessFares[e]?.[s]) businessBase = this.businessFares[e][s];
-
-                    // 確定當前選擇的車廂基準票價
                     const base = this.query.carType === 'standard' ? standardBase : businessBase;
 
                     // 全票直接返回原價，優待票一律半價 (無條件捨去)
@@ -917,6 +1014,59 @@
                 },
                 copyPriceToCalculator() { 
                     this.calc.amount = this.calculatedPriceVal; 
+                },
+                // 表格小幫手：取得基本票價
+                getBaseFare(s1, s2, isBusiness) {
+                    const dict = isBusiness ? this.businessFares : this.standardFares;
+                    if (dict[s1] && dict[s1][s2]) return dict[s1][s2];
+                    if (dict[s2] && dict[s2][s1]) return dict[s2][s1];
+                    return 0;
+                },
+                // 表格小幫手：判斷是否為「北部短程」不能打折的區段
+                isShortSegment(s1, s2) {
+                    const shorts = ['南港', '台北', '板橋'];
+                    return shorts.includes(s1) && shorts.includes(s2);
+                },
+                // 依據位置渲染票價總表格子內容 (Top-Right: 商務 / Bottom-Left: 標準)
+                getMatrixCell(rIdx, cIdx) {
+                    if (rIdx === cIdx) return '-';
+                    const s1 = this.stations[rIdx].name;
+                    const s2 = this.stations[cIdx].name;
+                    
+                    // Top-Right => Business
+                    if (rIdx < cIdx) {
+                        const base = this.getBaseFare(s1, s2, true);
+                        const isShort = this.isShortSegment(s1, s2);
+                        let val;
+                        
+                        if (this.activeTableTab === 'discount') {
+                            val = isShort ? base : Math.round(base * 0.95);
+                        } else if (this.activeTableTab === 'concession') {
+                            val = base / 2; // 商務車廂皆為偶數, 直接除以2即可
+                        } else {
+                            val = base;
+                        }
+                        
+                        return isShort ? val.toLocaleString() + '*' : val.toLocaleString();
+                    } 
+                    // Bottom-Left => Standard
+                    else {
+                        const base = this.getBaseFare(s1, s2, false);
+                        
+                        if (this.activeTableTab === 'discount') {
+                            return Math.round(base * 0.85).toLocaleString();
+                        } else if (this.activeTableTab === 'concession') {
+                            return (base / 2).toLocaleString();
+                        } else {
+                            return base.toLocaleString();
+                        }
+                    }
+                },
+                // 表格顏色 CSS 類別
+                getCellClass(rIdx, cIdx) {
+                    if (rIdx === cIdx) return 'bg-slate-50 text-slate-400';
+                    if (rIdx < cIdx) return 'bg-red-50/20 text-red-700 hover:bg-red-100 transition-colors'; // Business (Top-Right)
+                    return 'bg-blue-50/50 text-blue-700 hover:bg-blue-100 transition-colors'; // Standard (Bottom-Left)
                 }
             },
             mounted() { lucide.createIcons(); },
