@@ -633,29 +633,6 @@
                     </div>
                 </section>
 
-                <!-- FAQ Section -->
-                <section class="travel-card p-6 md:p-8 border-t-4 border-t-secondary-500">
-                    <div class="flex items-center mb-6">
-                        <div class="icon-box bg-secondary-50 text-secondary-500"><i data-lucide="message-circle-question" class="w-5 h-5"></i></div>
-                        <h2 class="text-lg font-bold text-slate-800">高鐵常見 Q&A</h2>
-                    </div>
-
-                    <div class="space-y-3">
-                        <div v-for="(faq, index) in faqs" :key="index" class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                            <button @click="faq.open = !faq.open" class="w-full flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 transition-colors text-left font-bold text-slate-800 text-sm focus:outline-none">
-                                <span class="flex items-start gap-3 pr-4">
-                                    <span class="text-secondary-500 font-extrabold shrink-0">Q{{ index + 1 }}.</span>
-                                    <span>{{ faq.q }}</span>
-                                </span>
-                                <i data-lucide="chevron-down" :class="{'rotate-180': faq.open}" class="w-4 h-4 text-slate-400 transition-transform shrink-0"></i>
-                            </button>
-                            <div v-show="faq.open" class="p-4 text-sm text-slate-600 bg-white leading-relaxed border-t border-slate-100 font-medium">
-                                <span class="text-emerald-600 font-extrabold mr-2">A.</span>{{ faq.a }}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
             </div>
 
             <!-- Right Column: Interactive Booking Widget -->
@@ -890,6 +867,29 @@
                         <div class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center mb-2 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors"><i data-lucide="calendar-search" class="w-5 h-5"></i></div>
                         <span class="text-[11px] font-bold text-slate-600">疏運日期</span>
                     </a>
+                </section>
+
+                <!-- FAQ Section -->
+                <section class="travel-card p-6 md:p-8 border-t-4 border-t-secondary-500">
+                    <div class="flex items-center mb-6">
+                        <div class="icon-box bg-secondary-50 text-secondary-500"><i data-lucide="message-circle-question" class="w-5 h-5"></i></div>
+                        <h2 class="text-lg font-bold text-slate-800">高鐵常見 Q&A</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div v-for="(faq, index) in faqs" :key="index" class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <button @click="faq.open = !faq.open" class="w-full flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 transition-colors text-left font-bold text-slate-800 text-sm focus:outline-none">
+                                <span class="flex items-start gap-3 pr-4">
+                                    <span class="text-secondary-500 font-extrabold shrink-0">Q{{ index + 1 }}.</span>
+                                    <span>{{ faq.q }}</span>
+                                </span>
+                                <i data-lucide="chevron-down" :class="{'rotate-180': faq.open}" class="w-4 h-4 text-slate-400 transition-transform shrink-0"></i>
+                            </button>
+                            <div v-show="faq.open" class="p-4 text-sm text-slate-600 bg-white leading-relaxed border-t border-slate-100 font-medium">
+                                <span class="text-emerald-600 font-extrabold mr-2">A.</span>{{ faq.a }}
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
             </div>
